@@ -61,18 +61,20 @@ def main():
     # Parse cmd arguments
     parsed = parser.parse_args()
 
+    attack_type = "Dictionary" if parsed.wordlist else "Brute-force"
+
     # If given wordlist, use it
-    if parsed.wordlist:
+    if attack_type == "Dictionary":
         wordlist = read_wordlist(parsed.wordlist)
         result = dict_attack(wordlist, parsed.hash)
-
-        if result is False:
-            print("Dictionary failed to find a match.")
-        else:
-            print("Match found: \"{}\"".format(result))
     else:
         # Brute force mode
-        brute_force(parsed.hash)
+        result = brute_force(parsed.hash)
+
+    if result is False:
+        print(attack_type, "attack failed to find a match.")
+    else:
+        print("Match found: \"{}\"".format(result))
 
 
 if __name__ == "__main__":
