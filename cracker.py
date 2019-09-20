@@ -1,6 +1,9 @@
 import hashlib
 import argparse
 
+# TODO: Implement multithreading?
+# TODO: Implement GPU support?
+
 # A string of all printable ASCII characters
 from string import printable
 
