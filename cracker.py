@@ -35,9 +35,13 @@ def dict_attack(arr, given_hash):
     return False
 
 
-# Given the md5 hash, brute force the hash
+# TODO: Complete brute force mode
+# Given the md5 hash, brute force the hash.
+# Return:
+#   False if no match found
+#   password if match found
 def brute_force(given_hash):
-    print("NO")
+    return False
 
 
 def main():
