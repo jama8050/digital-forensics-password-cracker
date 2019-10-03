@@ -133,12 +133,16 @@ def main():
         number_of_hashes, elapsed, result = dict_attack(parsed.hash, wordlist)
     else:
         # Brute force mode
-        number_of_hashes, result = brute_force(parsed.hash)
+        number_of_hashes, elapsed, result = brute_force(parsed.hash, b_dict)
 
+    print("Attacked hash for {} seconds.".format(elapsed))
+    print("Tried {} different passwords.".format(number_of_hashes))
+
+    # If we didn't find a match, print as such
     if result is False:
         print(attack_type, "attack failed to find a match.")
     else:
-        print("Match found: \"{}\"".format(result))
+        print('Match found: "{}"'.format(result))
 
 
 if __name__ == "__main__":
