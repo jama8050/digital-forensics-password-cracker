@@ -1,8 +1,8 @@
 import hashlib
 import argparse
-
-# A string of all printable ASCII characters
 import time
+
+# A string of all printable ASCII characters, with some of the whitespace ones removed
 from string import ascii_letters, digits, punctuation
 # Dictionary used for brute forcing
 b_dict = list(ascii_letters)
