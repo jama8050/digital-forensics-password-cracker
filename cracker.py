@@ -28,19 +28,30 @@ def read_wordlist(file_argument):
     return lines
 
 
-# Given a list of words, hash each word against the given md5 hash
-def dict_attack(arr, given_hash):
-    for word in arr:
+# Given the md5 hash and a dictionary to use, brute force the hash.
+# Return:
+#   Number of hashes attempted
+#   Number of seconds elapsed while cracking password
+#   Hash result:
+#       False if no match found
+#       password if match found
+def dict_attack(given_hash, used_dict):
+    # Number of hashes computed in total
+    number_of_hashes = 0
+    start_time = time.time()
+
+    # For every word in the dictionary
+    for word in used_dict:
+        number_of_hashes += 1
         # Hash the word in the wordlist
         hashed_word = give_hash(word)
-        # print("Checking with \"{}\", \"{}\"".format(word, hashed_word))
 
         # If found hash, return the word from the wordlist that worked
         if hashed_word == given_hash:
-            return word
+            return number_of_hashes,  (time.time() - start_time), word
 
     # If the password couldn't be found, return False
-    return False
+    return number_of_hashes, (time.time() - start_time), False
 
 
 # Given the md5 hash, a dictionary to use (optional), and a limit on the length of the password, brute force the hash.
@@ -111,7 +122,7 @@ def main():
     # If given wordlist, use it
     if attack_type == "Dictionary":
         wordlist = read_wordlist(parsed.wordlist)
-        result = dict_attack(wordlist, parsed.hash)
+        number_of_hashes, elapsed, result = dict_attack(parsed.hash, wordlist)
     else:
         # Brute force mode
         number_of_hashes, result = brute_force(parsed.hash)
