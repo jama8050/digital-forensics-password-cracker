@@ -54,26 +54,34 @@ def dict_attack(given_hash, used_dict):
     return number_of_hashes, (time.time() - start_time), False
 
 
-# Given the md5 hash, a dictionary to use (optional), and a limit on the length of the password, brute force the hash.
+# Given the md5 hash, a dictionary to use, and a limit on the length of the password (optional), brute force the hash.
 # Return:
-#   False if no match found
-#   password if match found
-def brute_force(given_hash, used_dict=b_dict, limit=-1):
+#   Number of hashes attempted
+#   Number of seconds elapsed while cracking password
+#   Hash result:
+#       False if no match found
+#       password if match found
+def brute_force(given_hash, used_dict, limit=-1):
     last_combos = ['']
 
-    i = 0
-    # Infinite loop if no limit, else bounded by limit
-    while (i < limit and limit != -1) or (limit == -1):
-        i += 1
+    # How many hashes in total have been tried
+    number_of_hashes = 0
 
+    # Current length of the hashes
+    brute_length = 0
+    # Infinite loop if no limit, else bounded by limit
+    start_time = time.time()
+    while (brute_length < limit and limit != -1) or (limit == -1):
+        brute_length += 1
         # Combinations we've done so far
         current_combos = []
 
         # For every character in the provided dictionary
         for c in used_dict:
-
             # For every combination that was generated last iteration
             for combo in last_combos:
+                number_of_hashes += 1
+
                 # Generate and hash the current combination
                 immediate_combo = c + combo
                 current_hash = give_hash(immediate_combo)
@@ -81,7 +89,7 @@ def brute_force(given_hash, used_dict=b_dict, limit=-1):
                 # print('Trying hash "{}"\t{}'.format(immediate_combo, current_hash))
                 if current_hash == given_hash:
                     # Desired clear-text found, return it and the number of hashes we did before completion
-                    return i, current_hash
+                    return number_of_hashes, (time.time() - start_time), immediate_combo
                 else:
                     # immediate_combo is not the desired clear-text, add it to the current_combos for the next iteration
                     current_combos.append(immediate_combo)
@@ -90,7 +98,7 @@ def brute_force(given_hash, used_dict=b_dict, limit=-1):
         last_combos = current_combos
 
     # Couldn't find the hash after "i" tries, return False
-    return i, False
+    return number_of_hashes, (time.time() - start_time), False
 
 
 # Hash a given string
