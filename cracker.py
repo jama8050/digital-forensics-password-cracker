@@ -41,10 +41,6 @@ def dict_attack(given_hash, used_dict):
     return n_tries, (time() - start_time), False
 
 
-def build_hash(l, translate_dict):
-    return b''.join([translate_dict[val] for val in l])
-
-
 # Given the md5 hash, a dictionary to use, and a limit on the length of the password (optional), brute force the hash.
 # Return:
 #   Number of hashes attempted
@@ -60,8 +56,8 @@ def brute_force(given_hash, used_dict, limit=-1):
     # Current length of the hashes
     brute_length = 0
 
-    # array of indexes representing values in used_dict
-    current_chars = []
+    # List of the hashes from the previous iteration of the while loop
+    last_combos = [b'']
 
     # Time we start cracking
     start_time = time()
@@ -69,41 +65,41 @@ def brute_force(given_hash, used_dict, limit=-1):
     # Infinite loop if no limit, else bounded by limit
     while (brute_length < limit and limit != -1) or (limit == -1):
         brute_length += 1
-
-        # Since increasing number of characters to brute force, add a new place to the array
-        current_chars.append(0)
-
         print("Brute-force cracking with passwords of {} length".format(brute_length))
 
-        done_full_cascade = False
-        # Continue until first value is max
-        while current_chars[0] != dict_len and done_full_cascade is False:
-            n_tries += 1
-            # print("current_chars = ", end="")
-            # print(current_chars)
+        prior_size = len(last_combos)
+        last_combos *= dict_len
 
-            # Translate list into string, check if solution found, return if so
-            built_string = build_hash(current_chars, used_dict)
-            if md5(built_string).hexdigest() == given_hash:
-                return n_tries, (time() - start_time), built_string
+        i = 0
+        for c in used_dict:
+            for j in range(0, prior_size):
+                n_tries += 1
+                last_combos[i] += c
+                if md5(last_combos[i]).hexdigest() == given_hash:
+                    return n_tries, (time() - start_time), last_combos[i]
+                else:
+                    i += 1
 
-            # Last value has been tried as max, reset to zero and go down the chain, resetting maxes to zero
-            # and incrementing the value just after the last occurrence of the max
-            if current_chars[-1] == dict_len - 1:
-                i = brute_length - 1
-                while current_chars[i] == dict_len - 1:
-                    current_chars[i] = 0
-                    done_full_cascade = (i == 0)
-                    i -= 1
+        # Im just going to keep this here. It's from a previous attempt that I forgot to commit
+        # for i in range(0, lc_size):
+        #     immediate_combo = last_combos[i]
+        #     for c in used_dict:
+        #         n_tries += 1
+        #         sub_h = md5(immediate_combo + c).hexdigest()
+        #         print((immediate_combo + c).decode("ascii"))
+        #
+        #         # print('Trying hash "{}"\t{}'.format(immediate_combo, current_hash))
+        #         if sub_h == given_hash:
+        #             # Desired clear-text found, return it and the number of hashes we did before completion
+        #             return n_tries, (time() - start_time), (immediate_combo + c)
+        #         else:
+        #             # immediate_combo is not the desired clear-text, add it to the current_combos for the next iteration
+        #             last_combos[i] += c
+        #
+        # # Loop completed, replace old "last_combos" with "current_combos" for next iteration
+        # #last_combos = current_combos
 
-                # Removes errors that occur when a full cascade is performed (when all values reset to zero)
-                if done_full_cascade is False:
-                    # print("incrementing index", i)
-                    current_chars[i] += 1
-            else:
-                current_chars[-1] += 1
-
-    # Couldn't find the hash after "n_tries" tries, return False
+    # Couldn't find the hash after "i" tries, return False
     return n_tries, (time() - start_time), False
 
 
@@ -116,16 +112,6 @@ if __name__ == "__main__":
     parser.add_argument("--wordlist",
                         help="Enable wordlist mode, providing a wordlist",
                         type=str)
-
-    # Add argument for debug which uses used_dict brute-force mode
-    parser.add_argument("--debug",
-                        help="Pass debug characters to brute-force mode. DO NOT USE UNLESS TESTING",
-                        action="store_true")
-
-    # Add argument for debug which uses used_dict brute-force mode
-    parser.add_argument("--advanced",
-                        help="Pass all printable ASCII characters to brute-force mode. Slower.",
-                        action="store_true")
 
     # Add md5 hash parameter
     parser.add_argument("hash",
@@ -145,21 +131,9 @@ if __name__ == "__main__":
                                                         wordlist)
     else:
         # Brute force mode
-        if parsed.debug and parsed.advanced:
-            raise Exception("Cannot use debug and advanced mode simultaneously!")
-        elif parsed.debug:
-            print("!!DEBUG MODE ENABLED!!")
-            brute_chars = [b'a', b'b', b'c']
-        elif parsed.advanced:
-            print("!!ADVANCED MODE ENABLED!!")
-            brute_chars = [c.encode(encoding) for c in printable[:-5]]
-        else:
-            print("Only using lowercase characters")
-            brute_chars = [c.encode(encoding) for c in ascii_lowercase]
-
+        # [b'a', b'b', b'c'],[c.encode(encoding) for c in printable[:-2]]
         number_of_hashes, elapsed, result = brute_force(hash_to_crack,
-                                                        brute_chars)
-        # RUNTIME ANALYSIS
+                                                        [c.encode(encoding) for c in ascii_lowercase])
 
     print("Attacked hash for {} seconds.".format(elapsed))
     print("Tried {} different passwords.".format(number_of_hashes))
