@@ -4,16 +4,10 @@ from argparse import ArgumentParser
 from time import time
 
 # A string of all printable ASCII characters, with some of the whitespace ones removed
-from string import ascii_lowercase
+from string import ascii_lowercase, printable
 
 # TODO: Implement multithreading?
 # TODO: Implement GPU support?
-
-# Needs two methods:
-#   1. dictionary method
-#   2. brute force method
-# Dictionary will need to accept a wordlist txt file
-# Brute force methodology will be.... interesting
 
 
 # Reads the lines from the given file and returns list of all the lines
