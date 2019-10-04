@@ -49,7 +49,9 @@ def dict_attack(given_hash, used_dict):
 #       False if no match found
 #       password if match found
 def brute_force(given_hash, used_dict, limit=-1):
+    # Number of valid characters given to us in the dictionary
     dict_len = len(used_dict)
+
     # How many hashes in total have been tried
     n_tries = 0
 
