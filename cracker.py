@@ -82,25 +82,6 @@ def brute_force(given_hash, used_dict, limit=-1):
                 else:
                     i += 1
 
-        # Im just going to keep this here. It's from a previous attempt that I forgot to commit
-        # for i in range(0, lc_size):
-        #     immediate_combo = last_combos[i]
-        #     for c in used_dict:
-        #         n_tries += 1
-        #         sub_h = md5(immediate_combo + c).hexdigest()
-        #         print((immediate_combo + c).decode("ascii"))
-        #
-        #         # print('Trying hash "{}"\t{}'.format(immediate_combo, current_hash))
-        #         if sub_h == given_hash:
-        #             # Desired clear-text found, return it and the number of hashes we did before completion
-        #             return n_tries, (time() - start_time), (immediate_combo + c)
-        #         else:
-        #             # immediate_combo is not the desired clear-text, add it to the current_combos for the next iteration
-        #             last_combos[i] += c
-        #
-        # # Loop completed, replace old "last_combos" with "current_combos" for next iteration
-        # #last_combos = current_combos
-
     # Couldn't find the hash after "i" tries, return False
     return n_tries, (time() - start_time), False
 
