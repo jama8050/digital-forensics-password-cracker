@@ -12,6 +12,10 @@ Restricted to:
 * Passwords that are 1 - 5 characters long,
 * And lowercase ASCII characters only.
 
+## Prerequisites
+This program was developed with Python 3.7
+and I am unaware what the oldest version of Python is compatible with this script.
+
 ## Usage
 Enter the following command to see the usage information:
 ```python
@@ -57,9 +61,10 @@ The implementation of this feature was trivial:
 1. GPU support.
 1. Support for other hashing algorithms (e.g., SHA-256, SHA-1).
 
-## Prerequisites
-This program was developed with Python 3.7
-and I am unaware what the oldest version of Python is compatible with this script.
+## Known Issues
+* This solution is pretty memory inefficient.
+* The process receives a SIGKILL from something (the Python shell?) if it runs too long.
+* Don't even get me *started* on the runtime complexity...
 
 ## Credit
 Created by Jacob Malcy for CYBR-5830 Digital Forensics, Fall 2019, Project 1
