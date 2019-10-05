@@ -1,4 +1,4 @@
-# MD5PyCrack
+# [MD5PyCrack](https://github.com/jama8050/digital-forensics-password-cracker)
 Python 3 MD5 hash cracker restricted to passwords of length 1 - 5.
 
 ## Support Attack Methods
@@ -68,3 +68,6 @@ The implementation of this feature was trivial:
 
 ## Credit
 Created by Jacob Malcy for CYBR-5830 Digital Forensics, Fall 2019, Project 1
+
+## License
+MIT
