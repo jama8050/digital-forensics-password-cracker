@@ -10,32 +10,27 @@ from string import ascii_lowercase, printable
 # TODO: Implement GPU support?
 
 
-# Reads the lines from the given file and returns list of all the lines
-def read_wordlist(file_argument):
-    with open(file_argument, 'rb') as reader:
-        lines = [line.strip() for line in reader.readlines() if len(line.strip()) > 0]
-    return lines
-
-
-# Given the md5 hash and a dictionary to use, brute force the hash.
+# Given the md5 hash and the name of the file to use as the dictionary,
+# perform a dictionary attack against the given hash.
 # Return:
 #   Number of hashes attempted
 #   Number of seconds elapsed while cracking password
 #   Hash result:
 #       False if no match found
 #       password if match found
-def dict_attack(given_hash, used_dict):
+def dict_attack(given_hash, file_argument):
     # Number of hashes computed in total
     n_tries = 0
     start_time = time()
 
     # For every word in the dictionary
-    for word in used_dict:
-        n_tries += 1
+    with open(file_argument, 'rb') as reader:
+        for word in reader:
+            n_tries += 1
 
-        # If found hash, return the word from the wordlist that worked
-        if md5(word).hexdigest() == given_hash:
-            return n_tries, (time() - start_time), word
+            # If found hash, return the word from the wordlist that worked
+            if md5(word.strip()).hexdigest() == given_hash:
+                return n_tries, (time() - start_time), word.strip()
 
     # If the password couldn't be found, return False
     return n_tries, (time() - start_time), False
@@ -124,9 +119,8 @@ if __name__ == "__main__":
 
     # If given wordlist, use it
     if attack_type == "Dictionary":
-        wordlist = read_wordlist(parsed.wordlist)
         number_of_hashes, elapsed, result = dict_attack(hash_to_crack,
-                                                        wordlist)
+                                                        parsed.wordlist)
     else:
         # Brute force mode
         number_of_hashes, elapsed, result = brute_force(hash_to_crack,
